@@ -30,6 +30,7 @@ function smarty_function_paginate_next($params, &$smarty) {
 
     $_id = 'default';
     $_attrs = array();
+	$sp = new SmartyPaginate();
     
     if (!class_exists('SmartyPaginate')) {
         $smarty->trigger_error("paginate_next: missing SmartyPaginate class");
@@ -43,7 +44,7 @@ function smarty_function_paginate_next($params, &$smarty) {
     foreach($params as $_key => $_val) {
         switch($_key) {
             case 'id':
-                if (!SmartyPaginate::isConnected($_val)) {
+                if (!$sp->isConnected($_val)) {
                     $smarty->trigger_error("paginate_next: unknown id '$_val'");
                     return;        
                 }
@@ -55,20 +56,20 @@ function smarty_function_paginate_next($params, &$smarty) {
         }
     }
     
-    if (SmartyPaginate::getTotal($_id) === false) {
+    if ($sp->getTotal($_id) === false) {
         $smarty->trigger_error("paginate_next: total was not set");
         return;        
     }
     
-    $_url = SmartyPaginate::getURL($_id);
+    $_url = $sp->getURL($_id);
     
     $_attrs = !empty($_attrs) ? ' ' . implode(' ', $_attrs) : '';    
     
-    if(($_item = SmartyPaginate::_getNextPageItem($_id)) !== false) {
+    if(($_item = $sp->_getNextPageItem($_id)) !== false) {
         $_show = true;
-        $_text = isset($params['text']) ? $params['text'] : SmartyPaginate::getNextText($_id);
+        $_text = isset($params['text']) ? $params['text'] : $sp->getNextText($_id);
         $_url .= (strpos($_url, '?') === false) ? '?' : '&';
-        $_url .= SmartyPaginate::getUrlVar($_id) . '=' . $_item;
+        $_url .= $sp->getUrlVar($_id) . '=' . $_item;
     } else {
         $_show = false;   
     }
